@@ -1,0 +1,162 @@
+{
+  "matches": [
+    {
+      "id": "5b59a563c6b14b460a6bd7f1",
+      "sport": {
+        "id": 1,
+        "name": "Fútbol",
+        "short_name": "",
+        "url": "futbol",
+        "path": "/futbol/"
+      },
+      "competition": {
+        "id": 23,
+        "name": "LaLiga Santander",
+        "short_name": "",
+        "url": "liga-primera",
+        "path": "/futbol/liga-primera/"
+      },
+      "metadata": {
+        "date": "2018-08-17T20:15:00Z",
+        "season": "2018-2019",
+        "phase": "liga",
+        "phase_id": "0",
+        "week": 1,
+        "group": "",
+        "status": "finalizado",
+        "minute": 94,
+        "live": true,
+        "tv": "beIN La Liga",
+        "extra": "94"
+      },
+      "location": {
+        "name": "Montilivi",
+        "capacity": 9286,
+        "address": "Avenida Montilivi, 141, 17003, Girona, Girona",
+        "locality": "Girona",
+        "province": "Girona",
+        "country": "ESP",
+        "postal_code": "17003",
+        "length": 105,
+        "width": 68,
+        "latitude": 41.9612,
+        "longitude": 2.82845
+      },
+      "home": {
+        "id": 801,
+        "name": "Girona Fútbol Club SAD",
+        "short_name": "Girona",
+        "url": "girona-fc",
+        "initials": "GIR",
+        "country": "ESP",
+        "scores": {
+          "score": 0,
+          "partial": [],
+          "metadata": {
+            "penalty_score": 0,
+            "points": "",
+            "service": false
+          }
+        },
+        "scorers": []
+      },
+      "away": {
+        "id": 810,
+        "name": "Real Valladolid Club de Fútbol SAD",
+        "short_name": "Valladolid",
+        "url": "real-valladolid-cf",
+        "initials": "VLL",
+        "country": "ESP",
+        "scores": {
+          "score": 0,
+          "partial": [],
+          "metadata": {
+            "penalty_score": 0,
+            "points": "",
+            "service": false
+          }
+        }
+      }
+    }
+  ],
+  "matches ": [
+    {
+      "id": "5b59a563c6b14b460a6bd7f1",
+      "sport": {
+        "id": 1,
+        "name": "Fútbol",
+        "short_name": "",
+        "url": "futbol",
+        "path": "/futbol/"
+      },
+      "competition": {
+        "id": 23,
+        "name": "LaLiga Santander",
+        "short_name": "",
+        "url": "liga-primera",
+        "path": "/futbol/liga-primera/"
+      },
+      "metadata": {
+        "date": "2018-08-17T20:15:00Z",
+        "season": "2018-2019",
+        "phase": "liga",
+        "phase_id": "0",
+        "week": 1,
+        "group": "",
+        "status": "finalizado",
+        "minute": 94,
+        "live": true,
+        "tv": "beIN La Liga",
+        "extra": "94"
+      },
+      "location": {
+        "name": "Montilivi",
+        "capacity": 9286,
+        "address": "Avenida Montilivi, 141, 17003, Girona, Girona",
+        "locality": "Girona",
+        "province": "Girona",
+        "country": "ESP",
+        "postal_code": "17003",
+        "length": 105,
+        "width": 68,
+        "latitude": 41.9612,
+        "longitude": 2.82845
+      },
+      "home": {
+        "id": 801,
+        "name": "Real Madrid",
+        "short_name": "Real Madrid",
+        "url": "real-madrid-fc",
+        "initials": "RM",
+        "country": "ESP",
+        "scores": {
+          "score": 2,
+          "partial": [],
+          "metadata": {
+            "penalty_score": 0,
+            "points": "",
+            "service": false
+          }
+        },
+        "scorers": []
+      },
+      "away": {
+        "id": 810,
+        "name": "Barcelona FC",
+        "short_name": "barcelona",
+        "url": "barcelona-cf",
+        "initials": "BA",
+        "country": "ESP",
+        "scores": {
+          "score": 0,
+          "partial": [],
+          "metadata": {
+            "penalty_score": 0,
+            "points": "",
+            "service": false
+          }
+        }
+      }
+    }
+  ]
+}
