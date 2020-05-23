@@ -8,13 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
+ * @ORM\Table(name="games")
  */
 class Match
 {
-    private const MATCH_STATUS_SCHEDULED  = '1' ;
-    private const MATCH_STATUS_POSTPONED  = '2' ;
-    private const MATCH_STATUS_DISPUTING  = '3' ;
-    private const MATCH_STATUS_FINALIZED  = '4' ;
+    const MATCH_STATUS_SCHEDULED  = '1' ;
+    const MATCH_STATUS_POSTPONED  = '2' ;
+    const MATCH_STATUS_DISPUTING  = '3' ;
+    const MATCH_STATUS_FINALIZED  = '4' ;
 
     /**
      * @ORM\Id()
@@ -47,6 +48,18 @@ class Match
      * @ORM\OneToMany(targetEntity=Cards::class, mappedBy="game")
      */
     private $card;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Team::class, inversedBy="home", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $home;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Team::class, inversedBy="away", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $away;
 
     public function __construct()
     {
@@ -153,6 +166,30 @@ class Match
                 $card->setGame(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getHome(): ?Team
+    {
+        return $this->home;
+    }
+
+    public function setHome(Team $home): self
+    {
+        $this->home = $home;
+
+        return $this;
+    }
+
+    public function getAway(): ?Team
+    {
+        return $this->away;
+    }
+
+    public function setAway(Team $away): self
+    {
+        $this->away = $away;
 
         return $this;
     }

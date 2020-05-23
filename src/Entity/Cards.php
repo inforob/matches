@@ -4,11 +4,14 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\Entity() */
+/**
+ * @ORM\Entity()
+ * @ORM\Table(name="cards")
+ */
 class Cards
 {
-    private const CARD_TYPE_RED = '2';
-    private const CARD_TYPE_YELLOW = '1';
+    const CARD_TYPE_RED = '2';
+    const CARD_TYPE_YELLOW = '1';
 
     /**
      * @ORM\Id()
