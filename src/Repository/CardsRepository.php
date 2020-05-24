@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Cards;
+use App\Entity\Match;
+use App\Entity\Player;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -47,4 +49,56 @@ class CardsRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function save($data) : void
+    {
+        /** @var Cards $cards */
+        if(isset($data['home']['cards'])){
+            $this->storeCards($data['id'],$data['home']['cards']);
+        }
+
+        if(isset($data['away']['cards'])){
+            $this->storeCards($data['id'],$data['away']['cards']);
+        }
+    }
+
+    public function storeCards($idMatch,array $cards) {
+
+        foreach ($cards as $card) {
+
+            if($card['type'] != Cards::CARD_TYPE_RED && $card['type'] != Cards::CARD_TYPE_YELLOW){
+                throw new \Exception('this colour card is not allowed');
+            }
+
+            /** @var Match $match */
+            $match = $this->getEntityManager()
+                ->getRepository(Match::class)->findOneBy(['id'=>$idMatch]);
+            if(!$match) {
+                throw new \Exception('This match is not registered for this season' );
+            }
+
+            /** @var Player $player */
+            $player = $this->getEntityManager()
+                ->getRepository(Player::class)->findOneBy(['id'=>$card['player']['id']]);
+            if(!$player) {
+                throw new \Exception('This player is not registered for this match:' . $card['player']['id']);
+            }
+
+            $fault = new Cards();
+
+            $fault->setPlayer($player);
+            $fault->setGame($match);
+            $fault->setMinute($card['minute']);
+            $fault->setSecond($card['second']);
+
+            if($card['type'] === 'tarjeta-amarilla') {
+                $fault->setType('1');
+            } else if($card['type'] === 'tarjeta-roja') {
+                $fault->setType('2');
+            }
+
+            $this->getEntityManager()->persist($fault);
+            $this->getEntityManager()->flush();
+        }
+    }
 }
