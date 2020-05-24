@@ -7,15 +7,15 @@ class SneakEvent extends Event
 {
     const NAME = 'sneak.event';
 
-    protected $foo;
+    protected $goals;
 
-    public function __construct()
+    public function __construct(array $goals)
     {
-        $this->foo = 'bar';
+        $this->goals = $goals;
     }
 
-    public function getFoo()
+    public function getGoals()
     {
-        return $this->foo;
+        return $this->goals;
     }
 }

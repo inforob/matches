@@ -93,18 +93,9 @@ class MatchRepository extends ServiceEntityRepository implements EntityInterface
 
             $entity->setStatus($data['metadata']['status']);
 
-            if(isset($data['home']['scorers'])) {
-                /** @var Score $score */
-                $score = $this->getEntityManager()
-                    ->getRepository(Score::class)
-                    ->save($data);
-            }
-            if(isset($data['away']['scorers'])) {
-                /** @var Score $score */
-                $score = $this->getEntityManager()
-                    ->getRepository(Score::class)
-                    ->save($data);
-            }
+            $score = $this->getEntityManager()
+                ->getRepository(Score::class)
+                ->save($data);
 
 
             // TODO Update Card

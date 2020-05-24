@@ -85,7 +85,7 @@ class Score
 
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
-        $this->createdAT = $createdAt;
+        $this->createdAt = $createdAt;
 
         return $this;
     }

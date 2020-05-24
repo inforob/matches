@@ -54,44 +54,48 @@ class ScoreRepository extends ServiceEntityRepository implements EntityInterface
     }
     */
 
-    public function save($data): Score
+    public function save($data) : void
     {
-
+        /** @var Score $score */
         if(isset($data['home']['scorers'])){
-
-
+            $this->storeGoals($data['id'],$data['home']['scorers']);
         }
 
+        if(isset($data['away']['scorers'])){
+            $this->storeGoals($data['id'],$data['away']['scorers']);
+        }
 
-        return $score;
     }
 
     public function update(EntityBase $entity, array $data): Score
     {}
 
-    public function storeGoals(array $scorers) {
+    public function storeGoals($idMatch,array $scorers) {
 
-        foreach ($data['scorers'] as $goals) {
+        foreach ($scorers as $goals) {
             $score = new Score();
 
             /** @var Match $match */
             $match = $this->getEntityManager()
-                ->getRepository(Match::class)->findOneBy(['id'=>$data['match']['id']]);
+                ->getRepository(Match::class)->findOneBy(['id'=>$idMatch]);
             if(!$match) {
-                throw new Exception('This match is not registered for this season');
+                throw new \Exception('This match is not registered for this season' );
             }
 
             /** @var Player $player */
             $player = $this->getEntityManager()
                 ->getRepository(Player::class)->findOneBy(['id'=>$goals['player']['id']]);
             if(!$player) {
-                throw new Exception('This player is not registered for this match');
+                throw new \Exception('This player is not registered for this match:' . $goals['player']['id']);
             }
 
             $score->setPlayer($player);
             $score->setGame($match);
             $score->setMinute($goals['minute']);
             $score->setSecond($goals['second']);
+
+            $score->setCreatedAt(new \DateTime());
+            $score->setUpdatedAt(new \DateTime());
 
             $this->getEntityManager()->persist($score);
             $this->getEntityManager()->flush();

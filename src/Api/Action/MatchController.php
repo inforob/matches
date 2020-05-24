@@ -4,10 +4,11 @@ namespace App\Api\Action;
 
 use App\Entity\EntityBase;
 use App\Entity\Match;
+use App\Entity\Score;
+use App\Events\SneakEvent;
 use App\Utils\RequestTransformer;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\Persistence\ManagerRegistry;
-use phpDocumentor\Reflection\Types\Mixed_;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,25 +17,27 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class MatchController
 {
+    // Dispatcher Event
+    private $dispatcher;
     // Data persistence
     private $managerRegistry = null;
     // Object serializer
     private $serializer = null;
     // Dependences Injection
-    public function __construct(ManagerRegistry $managerRegistry,SerializerInterface $serializer)
+    public function __construct(EventDispatcherInterface $dispatcher,ManagerRegistry $managerRegistry,SerializerInterface $serializer)
     {
         $this->managerRegistry = $managerRegistry;
         $this->serializer = $serializer;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
-     * @Route("/bnzsa/match-data", methods={"GET","POST"})
+     * @Route("/bnzsa/match-data", methods={"POST"})
      *
      * @throws \Exception
      */
     public function __invoke(Request $request): Response
     {
-
         $matchJson = RequestTransformer::getRequiredField($request, 'match');
 
         $data = $this->reportMatchData($matchJson);
@@ -75,7 +78,21 @@ class MatchController
      */
     private function updateEntity(string $class, EntityBase $entity, array $data) : EntityBase
     {
-        // TODO Sneak-Event HERE
+        $goals = [] ;
+
+        /** @var Score $score */
+        if(isset($data['home']['scorers'])){
+            $goals = array_merge($goals,$data['home']['scorers']) ;
+        }
+
+        if(isset($data['away']['scorers'])){
+            $goals = array_merge($goals,$data['away']['scorers']) ;
+        }
+
+        if(count($goals) > 0) {
+            $event = new SneakEvent($goals);
+            $this->dispatcher->dispatch($event, SneakEvent::NAME);
+        }
 
         return $this->managerRegistry->getRepository($class)->update($entity,$data);
     }
