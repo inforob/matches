@@ -7,10 +7,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="App\Repository\TeamRepository")
  * @ORM\Table(name="teams")
  */
-class Team
+class Team extends EntityBase
 {
     /**
      * @ORM\Id()
@@ -143,37 +143,4 @@ class Team
         return $this;
     }
 
-    public function getHome(): ?Match
-    {
-        return $this->home;
-    }
-
-    public function setHome(Match $home): self
-    {
-        $this->home = $home;
-
-        // set the owning side of the relation if necessary
-        if ($home->getHome() !== $this) {
-            $home->setHome($this);
-        }
-
-        return $this;
-    }
-
-    public function getAway(): ?Match
-    {
-        return $this->away;
-    }
-
-    public function setAway(Match $away): self
-    {
-        $this->away = $away;
-
-        // set the owning side of the relation if necessary
-        if ($away->getAway() !== $this) {
-            $away->setAway($this);
-        }
-
-        return $this;
-    }
 }

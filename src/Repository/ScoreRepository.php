@@ -2,9 +2,14 @@
 
 namespace App\Repository;
 
+use App\Entity\EntityBase;
+use App\Entity\Match;
+use App\Entity\Player;
 use App\Entity\Score;
+use App\Interfaces\EntityInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use PHPUnit\Runner\Exception;
 
 /**
  * @method Score|null find($id, $lockMode = null, $lockVersion = null)
@@ -12,7 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Score[]    findAll()
  * @method Score[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ScoreRepository extends ServiceEntityRepository
+class ScoreRepository extends ServiceEntityRepository implements EntityInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -31,7 +36,8 @@ class ScoreRepository extends ServiceEntityRepository
             ->orderBy('s.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
-            ->getResult()
+            ->getRes  public function save($data): Match
+    {ult()
         ;
     }
     */
@@ -47,4 +53,49 @@ class ScoreRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function save($data): Score
+    {
+
+        if(isset($data['home']['scorers'])){
+
+
+        }
+
+
+        return $score;
+    }
+
+    public function update(EntityBase $entity, array $data): Score
+    {}
+
+    public function storeGoals(array $scorers) {
+
+        foreach ($data['scorers'] as $goals) {
+            $score = new Score();
+
+            /** @var Match $match */
+            $match = $this->getEntityManager()
+                ->getRepository(Match::class)->findOneBy(['id'=>$data['match']['id']]);
+            if(!$match) {
+                throw new Exception('This match is not registered for this season');
+            }
+
+            /** @var Player $player */
+            $player = $this->getEntityManager()
+                ->getRepository(Player::class)->findOneBy(['id'=>$goals['player']['id']]);
+            if(!$player) {
+                throw new Exception('This player is not registered for this match');
+            }
+
+            $score->setPlayer($player);
+            $score->setGame($match);
+            $score->setMinute($goals['minute']);
+            $score->setSecond($goals['second']);
+
+            $this->getEntityManager()->persist($score);
+            $this->getEntityManager()->flush();
+        }
+    }
+
 }

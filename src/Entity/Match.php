@@ -7,10 +7,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="App\Repository\MatchRepository")
  * @ORM\Table(name="games")
  */
-class Match
+class Match extends EntityBase
 {
     const MATCH_STATUS_SCHEDULED  = '1' ;
     const MATCH_STATUS_POSTPONED  = '2' ;
@@ -19,8 +19,7 @@ class Match
 
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=50)
      */
     private $id;
 
@@ -67,7 +66,7 @@ class Match
         $this->card = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -192,5 +191,13 @@ class Match
         $this->away = $away;
 
         return $this;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id): void
+    {
+        $this->id = $id;
     }
 }

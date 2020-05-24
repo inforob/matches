@@ -2,7 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\EntityBase;
+use App\Entity\Match;
 use App\Entity\Team;
+use App\Interfaces\EntityInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -12,7 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Team[]    findAll()
  * @method Team[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TeamRepository extends ServiceEntityRepository
+class TeamRepository extends ServiceEntityRepository implements EntityInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -47,4 +50,25 @@ class TeamRepository extends ServiceEntityRepository
         ;
     }
     */
+
+
+    public function save(array $data) : Team {
+        $team = new Team();
+
+        $team->setName($data['name']);
+        $team->setWeb($data['url']);
+        $team->setFounded('');
+        $team->setCountry($data['country']);
+
+        $this->getEntityManager()->persist($team);
+        $this->getEntityManager()->flush();
+
+        return $team;
+
+    }
+
+    public function update(EntityBase $entity, array $data): Team
+    {
+
+    }
 }

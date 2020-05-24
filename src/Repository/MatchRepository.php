@@ -2,7 +2,12 @@
 
 namespace App\Repository;
 
+use App\Entity\EntityBase;
 use App\Entity\Match;
+use App\Entity\Player;
+use App\Entity\Score;
+use App\Entity\Team;
+use App\Interfaces\EntityInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -12,7 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Match[]    findAll()
  * @method Match[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class MatchRepository extends ServiceEntityRepository
+class MatchRepository extends ServiceEntityRepository implements EntityInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -47,4 +52,69 @@ class MatchRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function save($data): Match
+    {
+        $match = new Match();
+        $match->setId($data['id']);
+        $match->setStatus($data['metadata']['status']);
+        $match->setSeason($data['metadata']['season']);
+        $match->setDate(new \DateTimeImmutable($data['metadata']['date']));
+
+        $home = $this->getEntityManager()->getRepository(Team::class)
+            ->findOneBy(['id' => $data['home']['id']]);
+        if (!$home) {
+            /** @var Team $home */
+            $home = $this->getEntityManager()
+                ->getRepository(Team::class)
+                ->save($data['home']);
+        }
+
+        $away = $this->getEntityManager()->getRepository(Team::class)
+            ->findOneBy(['id' => $data['away']['id']]);
+        if (!$away) {
+            /** @var Team $away */
+            $away = $this->getEntityManager()
+                ->getRepository(Team::class)
+                ->save($data['away']);
+        }
+        $match->setHome($home);
+        $match->setAway($away);
+
+        $this->getEntityManager()->persist($match);
+        $this->getEntityManager()->flush();
+
+        return $match;
+    }
+
+    public function update(EntityBase $entity, array $data): Match
+    {
+        if( $entity instanceof Match ) {
+
+            $entity->setStatus($data['metadata']['status']);
+
+            if(isset($data['home']['scorers'])) {
+                /** @var Score $score */
+                $score = $this->getEntityManager()
+                    ->getRepository(Score::class)
+                    ->save($data);
+            }
+            if(isset($data['away']['scorers'])) {
+                /** @var Score $score */
+                $score = $this->getEntityManager()
+                    ->getRepository(Score::class)
+                    ->save($data);
+            }
+
+
+            // TODO Update Card
+        }
+
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
+
+        return $entity;
+
+    }
+
 }

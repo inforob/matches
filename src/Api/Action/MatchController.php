@@ -2,70 +2,102 @@
 namespace App\Api\Action;
 
 
-use App\Entity\Cards;
+use App\Entity\EntityBase;
 use App\Entity\Match;
-use App\Entity\Player;
-use App\Entity\Team;
-use App\Events\SneakEvent;
-use DateTime;
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\Log\LoggerInterface;
+use App\Utils\RequestTransformer;
+use Doctrine\ORM\Mapping\Entity;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use phpDocumentor\Reflection\Types\Mixed_;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
+
 
 class MatchController
 {
+    // Data persistence
+    private $managerRegistry = null;
+    // Object serializer
+    private $serializer = null;
+    // Dependences Injection
+    public function __construct(ManagerRegistry $managerRegistry,SerializerInterface $serializer)
+    {
+        $this->managerRegistry = $managerRegistry;
+        $this->serializer = $serializer;
+    }
 
-    public function index(
-        ManagerRegistry $managerRegistry,
-        EventDispatcherInterface $dispatcher,
-        Request $request,
-        LoggerInterface $logger)
+    /**
+     * @Route("/bnzsa/match-data", methods={"GET","POST"})
+     *
+     * @throws \Exception
+     */
+    public function __invoke(Request $request): Response
     {
 
-        /** @var Match $match */
-        $match = $managerRegistry
+        $matchJson = RequestTransformer::getRequiredField($request, 'match');
+
+        $data = $this->reportMatchData($matchJson);
+
+        $jsonResponse = $this->prepareJsonResponse($data);
+
+        return new Response($jsonResponse);
+    }
+
+    /**
+     * @param $object
+     * @return string
+     */
+    public function prepareJsonResponse($object) {
+
+        return $this->serializer->serialize([$object],'json',[
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ]);
+    }
+
+    /**
+     * @param string $class
+     * @param array $data
+     * @return EntityBase
+     */
+    private function saveEntity(string $class, array $data) : EntityBase
+    {
+       return $this->managerRegistry->getRepository($class)->save($data);
+    }
+
+    /**
+     * @param string $class
+     * @param EntityBase $entity
+     * @param array $data
+     * @return EntityBase
+     */
+    private function updateEntity(string $class, EntityBase $entity, array $data) : EntityBase
+    {
+        // TODO Sneak-Event HERE
+
+        return $this->managerRegistry->getRepository($class)->update($entity,$data);
+    }
+
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    private function reportMatchData(array $data) : Match {
+
+        $match = $this->managerRegistry
             ->getRepository(Match::class)
-            ->findOneBy(['id'=>1]);
+            ->findOneBy(['id'=>$data['id']]);
 
-        /** @var Player $player */
-        $player = $managerRegistry
-            ->getRepository(Player::class)
-            ->findOneBy(['id'=>1]);
-
-        /** @var Team $team */
-        $team = $managerRegistry
-            ->getRepository(Team::class)
-            ->findOneBy(['id'=>2]);
-
-        /** @var Cards $cards */
-        $cards = new Cards();
-        $cards->setMinute(98);
-        $cards->setPlayer($player);
-        $cards->setSecond(56);
-        $cards->setType(Cards::CARD_TYPE_YELLOW);
-        $cards->setPlayer($player);
-        $cards->setGame($match);
-
-        $player->setTeam($team);
-        $em = $managerRegistry->getManager();
-
-        $em->persist($cards);
-        $em->flush();
-
-
-        if($request->getMethod() == 'GET') {
-            return new JsonResponse(['msg'=>'this ok4']);
-        } else if($request->getMethod() == 'POST') {
-            $test = json_decode($request->getContent());
-
-            $event = new SneakEvent();
-
-            $dispatcher->dispatch($event,'sneak.event');
-
-            return new JsonResponse(['msg'=>'this ok2','parameters'=>$test]);
+        if(!$match) {
+            $match = $this->saveEntity(Match::class, $data);
+        } else {
+            /** @var EntityBase $match */
+            $match = $this->updateEntity(Match::class, $match ,$data);
         }
+
+        return $match;
 
 
     }

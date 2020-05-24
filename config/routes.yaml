@@ -1,4 +1,4 @@
-api:
-    path: /api/v1/bnzsa/match-data
-    controller: App\Api\Action\MatchController::index
-    methods: ["GET","POST"]
+#api:
+#    path: /api/v1/bnzsa/match-data
+#    controller: App\Api\Action\MatchController
+#    methods: ["GET","POST"]
