@@ -4,9 +4,12 @@ namespace App\Api\Action;
 
 use App\Entity\EntityBase;
 use App\Entity\Match;
+use App\Entity\Player;
 use App\Entity\Score;
+use App\Entity\Team;
 use App\Events\SneakEvent;
 use App\Utils\RequestTransformer;
+use Cassandra\Date;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,11 +43,28 @@ class MatchController
     {
         $matchJson = RequestTransformer::getRequiredField($request, 'match');
 
-        $data = $this->reportMatchData($matchJson);
+        $player = new Player();
+        $player->setName('inforob1');
+        $player->setBirthday(new \DateTime());
+        $player->setInternational(false);
+        $player->setHeight(198);
+        $player->setWeight(110);
+        $player->setPosition('media-punta2222');
 
-        $jsonResponse = $this->prepareJsonResponse($data);
+        $team = $this->managerRegistry->getRepository(Team::class)->find(3);
 
-        return new Response($jsonResponse);
+        $player->setTeam($team);
+
+
+        $this->managerRegistry->getManager()->persist($player);
+        $this->managerRegistry->getManager()->flush();
+
+        return new Response(json_encode([]));
+//        $data = $this->reportMatchData($matchJson);
+//
+//        $jsonResponse = $this->prepareJsonResponse($data);
+//
+//        return new Response($jsonResponse);
     }
 
     /**

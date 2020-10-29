@@ -12,6 +12,18 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Player
 {
+    const AREA = [
+        1  => 'PHARMACIST_ATTENTION' ,
+        2  => 'PHARMACIST_ATTENTION' ,
+        3  => 'PHARMACIST_ATTENTION' ,
+        4  => 'PHARMACIST_ATTENTION' ,
+        5  => 'PHARMACIST_ATTENTION' ,
+        6  => 'PHARMACIST_ATTENTION' ,
+        7  => 'PHARMACIST_ATTENTION' ,
+        8  => 'PHARMACIST_ATTENTION' ,
+        9  => 'PHARMACIST_ATTENTION' ,
+    ];
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -30,7 +42,7 @@ class Player
     private $birthday;
 
     /**
-     * @ORM\Column(type="string", length=15)
+     * @ORM\Column(type="string", columnDefinition="ENUM('delantero', 'defensa','central','media-punta')" )
      */
     private $position;
 
